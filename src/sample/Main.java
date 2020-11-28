@@ -22,7 +22,7 @@ public class Main extends Application {
             String imageName = "file:images/"+i+".jpg";
             imagesList.add(new Image(imageName));
         }
-        BorderPane borderPane = new BorderPane(new ImageView(imagesList.get(3)));
+        BorderPane borderPane = new BorderPane();
 
 
         Scene scene = new Scene(borderPane);
