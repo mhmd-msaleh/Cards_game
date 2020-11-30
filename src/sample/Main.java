@@ -28,6 +28,11 @@ public class Main extends Application {
 
         Scene scene = new Scene(borderPane);
 
+        /*thlthkdhtklshlkjkjlkjkl
+        jklfjsdlkjflsdjflkfjlkj
+        kjskdljs
+         */
+
         //Setting primaryStage
         primaryStage.setTitle("Memory Game ");
         primaryStage.setScene(scene);
