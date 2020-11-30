@@ -13,13 +13,10 @@ import java.util.ArrayList;
 
 public class Main extends Application {
 
-    public static void main(String[] args) {
-        launch(args);
-    }
-
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws Exception{
 
+        //Creating ArrayList and Loading images from "images" directory
         ArrayList<Image>  imagesList = new ArrayList<>();
         for(int i = 1; i <= 8; i ++ ) {
             String imageName = "file:images/"+i+".jpg";
@@ -27,7 +24,10 @@ public class Main extends Application {
         }
         BorderPane borderPane = new BorderPane(new ImageView(imagesList.get(3)));
 
+
         Scene scene = new Scene(borderPane);
+
+        //Setting primaryStage
         primaryStage.setTitle("Memory Game ");
         primaryStage.setScene(scene);
         primaryStage.show();
