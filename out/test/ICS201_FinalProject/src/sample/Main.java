@@ -13,16 +13,20 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -35,17 +39,23 @@ public class Main extends Application {
     private Timeline animation = new Timeline();        //the timeline for the score of the player.
     private Scene playField;        //the scene where the player play the game.
     private Scene scoreBored;      //the scene where the score show.
+    private ArrayList<StopWatch> scores = new ArrayList<>();    //keep track of the scores.
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         GridPane gridPane = setPlayField();
 
+        MediaPlayer correct = new MediaPlayer(new Media(new File("sounds/Right.mp3").toURI().toString()));  //a sound for matching correctly.
+        MediaPlayer wrong = new MediaPlayer(new Media(new File("sounds/Wrong.mp3").toURI().toString()));    //a sound for matching wrong.
+        MediaPlayer youWin = new MediaPlayer(new Media(new File("sounds/youWin.mp3").toURI().toString()));
+        MediaPlayer letsAGo = new MediaPlayer(new Media(new File("sounds/lets-a-go.mp3").toURI().toString()));
+
         ImageView[][] images = Picture.generateImages(); //assigning the images with random order.
         ArrayList<Integer> firstAndSecondPicks = new ArrayList<>();            //This array's job is to detect whether the player selects two images or not.
 
-        ArrayList<StopWatch> scores = new ArrayList<>();    //keep track of the scores.
 
+        letsAGo.play();
         //for loop to make event handler for all buttons.
         for (int rows = 0; rows < buttons.length; rows++) {
             for (int columns = 0; columns < buttons[rows].length; columns++) {
@@ -57,11 +67,6 @@ public class Main extends Application {
                     buttons[finalRows][finalColumns].setDisable(true);          //disabling the button prevents the player to select it while it is being selected.
                     btImages[finalRows][finalColumns].setImage(images[finalRows][finalColumns].getImage());       //set the button to the selected image.
 
-                    if (isFinished(btImages)) {   //if the the game finished then stop the stopwatch(score) and add it to the array list.
-                        animation.stop();
-                        scores.add(yourScore);
-                    }
-
                     if (firstAndSecondPicks.size() == 4) {        //if the player selects two images then ... and clear the array.
                         //if the two images dose not match then set the buttons back to its normal state.
                         if (!images[firstAndSecondPicks.get(0)][firstAndSecondPicks.get(1)].getImage().equals(images[firstAndSecondPicks.get(2)][firstAndSecondPicks.get(3)].getImage())) {
@@ -72,8 +77,26 @@ public class Main extends Application {
                         }
                         firstAndSecondPicks.clear();        //clearing the array to use it again.
                     }
+
                     firstAndSecondPicks.add(finalRows);             //add the player selection to be detected.
                     firstAndSecondPicks.add(finalColumns);          //add the player selection to be detected.
+
+                    if (isFinished(btImages)) {   //if the the game finished then stop the stopwatch(score) and add it to the array list.
+                        animation.stop();
+                        scores.add(yourScore);
+                        youWin.play();
+                    }
+
+                    else if(firstAndSecondPicks.size() == 4){
+                        if (!images[firstAndSecondPicks.get(0)][firstAndSecondPicks.get(1)].getImage().equals(images[firstAndSecondPicks.get(2)][firstAndSecondPicks.get(3)].getImage())) {
+                            wrong.seek(Duration.ZERO);
+                            wrong.play();
+                        }
+                        else {
+                            correct.seek(Duration.ZERO);
+                            correct.play();
+                        }
+                    }
                 });
             }
         }
@@ -93,18 +116,24 @@ public class Main extends Application {
 
         Button btScores = new Button("Go to scores");
         Button btPlay = new Button("Play");
-
+        Text score = new Text();
         btScores.setOnAction(e -> {
             Collections.sort(scores);
             primaryStage.setScene(scoreBored);
+            String allScore="";
+            for(int k=0;k<scores.size();k++){
+                allScore += scores.get(0);
+                allScore+="\n";
+            }
+            score.setText(allScore);
         });
         btPlay.setOnAction(e -> primaryStage.setScene(playField));
-        Text score = new Text();
+
 
         VBox vboxForScores = new VBox();
         vboxForScores.setSpacing(10);
         vboxForScores.setAlignment(Pos.CENTER);
-        vboxForScores.getChildren().addAll(new Text("Scores:-"), new Text(scores + ""), btPlay);
+        vboxForScores.getChildren().addAll(new Text("Scores:-"), score, btPlay);
 
         watchStop.setFont(new Font(16));
         VBox vbox = new VBox();
@@ -147,6 +176,8 @@ public class Main extends Application {
     /** This method will set the play field by:
      * Creating a Grid Pane
      * Add buttons with cover images to Grid Pane
+     *
+     * @return GridPane
      */
     public GridPane setPlayField() {
         //Creating Grid Pane for Cards
