@@ -17,6 +17,12 @@ public class StopWatch implements Comparable<StopWatch> {
         }
     }
 
+    public void reset(){
+        second = 0;
+        minute = 0;
+        hour = 0;
+    }
+
     public int getHour() {
         return hour;
     }
@@ -31,7 +37,7 @@ public class StopWatch implements Comparable<StopWatch> {
 
     @Override
     public String toString() {
-        return String.format("%2d:%2d:%2d", hour, minute, second);
+        return String.format("%2d : %2d : %2d", hour, minute, second);
     }
 
     @Override
