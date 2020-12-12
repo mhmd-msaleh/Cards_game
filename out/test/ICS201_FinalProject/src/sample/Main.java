@@ -84,6 +84,10 @@ public class Main extends Application {
         return true;
     }
 
+    /**
+     *
+     * @return ImageView[16]
+     */
     public ImageView[] generateImages() {
         //Creating ArrayList and Loading images from "images" directory
         Image[] images = new Image[8];
@@ -104,6 +108,8 @@ public class Main extends Application {
             if (imageViews[randomIndex] == null){
                  //indexes.add(randomIndex);
                  imageViews[randomIndex] = new ImageView(images[i < 8 ? i : i - 8]);
+                 imageViews[randomIndex].setFitHeight(150);
+                 imageViews[randomIndex].setFitWidth(150);
             }
             else
                 i--;
@@ -209,7 +215,7 @@ public class Main extends Application {
         playFieldPane.setRight(vbox);
 
         ArrayList<Integer> firstAndSecondPicks = new ArrayList<>();            //This array's job is to detect whether the player selects two images or not.
-        ImageView[] images = generateImages();
+        buttonImages = generateImages();
 
         //for loop to make event handler for all buttons.
         for (int i = 0; i < buttons.size(); i++) {
@@ -218,11 +224,11 @@ public class Main extends Application {
                 // Set Action for buttons
                 buttons.get(i).setOnAction(e -> {
                     buttons.get(finalIndex).setDisable(true);          //disabling the button prevents the player to select it while it is being selected.
-                    buttonImages[finalIndex].setImage(images[finalIndex].getImage());       //set the button to the selected image.
+                    buttons.get(finalIndex).setGraphic(buttonImages[finalIndex]);       //set the button to the selected image.
 
                     if (firstAndSecondPicks.size() == 2) {        //if the player selects two images then ... and clear the array.
                         //if the two images dose not match then set the buttons back to its normal state.
-                        if (!images[firstAndSecondPicks.get(0)].getImage().equals(images[firstAndSecondPicks.get(1)].getImage())) {
+                        if (!buttonImages[firstAndSecondPicks.get(0)].getImage().equals(buttonImages[firstAndSecondPicks.get(1)].getImage())) {
                             buttonImages[firstAndSecondPicks.get(0)].setImage(coverImage);
                             buttons.get(firstAndSecondPicks.get(0)).setDisable(false);
                             buttonImages[firstAndSecondPicks.get(1)].setImage(coverImage);
@@ -241,7 +247,7 @@ public class Main extends Application {
                         btScores.fire();
 
                     } else if (firstAndSecondPicks.size() == 2) {
-                        if (!images[firstAndSecondPicks.get(0)].getImage().equals(images[firstAndSecondPicks.get(1)].getImage())) {
+                        if (!buttonImages[firstAndSecondPicks.get(0)].getImage().equals(buttonImages[firstAndSecondPicks.get(1)].getImage())) {
                             wrong.seek(Duration.ZERO);
                             wrong.play();
                         } else {
